@@ -36,7 +36,7 @@ class Profile(AbstractBaseUser):
 class Playlist(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='playuser')
-    song = models.ManyToManyField('Song', related_name='playsong', blank=True)
+    song = models.ManyToManyField('Song', related_name='songs', blank=True)
 
     def save(self, *args, **kwargs):
         if not self.name:
