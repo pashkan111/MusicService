@@ -1,23 +1,42 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractUser, UserManager
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
-from django.contrib.auth.models import AbstractUser
-from django.urls import reverse
 
+
+class UserAccountManager(BaseUserManager):
+    def create_user(self, email, name, password=None):
+        if not email:
+            raise ValueError('Users must have an email address')
+        
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name)
+
+        user.set_password(password)
+        user.save()
+
+        return user
+    
+    def create_superuser(self, email, name, password):
+        user = self.create_user(email, name, password)
+
+        user.is_superuser = True
+        user.is_staff = True
+        user.save()
+
+        return user
 
 class Profile(AbstractBaseUser):
-    username = models.CharField(verbose_name='Логин', max_length=50, unique=True, null=True, blank=True)
+    name = models.CharField(verbose_name='Логин', max_length=50, null=True, blank=True)
+    email = models.EmailField(verbose_name='Email', unique=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    email = models.EmailField(verbose_name='Email', unique=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-    objects = UserManager()
+    REQUIRED_FIELDS = ['name']
+    objects = UserAccountManager()
 
     def has_perms(self, perm, obj=None):
         return True
@@ -28,9 +47,18 @@ class Profile(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
-    class Meta:
-        verbose_name = 'Profile'
-        verbose_name_plural = 'Profiles'
+    def get_full_name(self):
+        if not self.name:
+            return self.email.strip().rsplit('@', 1)
+        return self.name
+    
+    def get_short_name(self):
+        if not self.name:
+            return self.email.strip().rsplit('@', 1)
+        return self.name
+    
+    def __str__(self):
+        return self.email  
         
 
 class Playlist(models.Model):
@@ -48,9 +76,9 @@ class Playlist(models.Model):
 
 
 class Song(models.Model):
-    title = models.CharField(max_length=100)
-    performer = models.CharField(max_length=100)
-    tags = models.CharField(max_length=100)
+    title = models.CharField(max_length=300)
+    performer = models.CharField(max_length=300)
+    tags = models.CharField(max_length=300)
     important = models.BooleanField(default=False)
 
     def __str__(self):

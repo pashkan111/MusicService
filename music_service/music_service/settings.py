@@ -1,12 +1,9 @@
 from pathlib import Path, os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-mu)%6-r9on#kb4&lxbg=y7b#*!u+*pkte9*ds4*m)9-3n(3i_&'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -17,7 +14,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000"
 ]
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -28,7 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mainapp',
     'rest_framework',
-    'corsheaders',
+    'djoser',
+    'rest_framework_simplejwt',
+    # 'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -42,6 +40,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES': [ 
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
+
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+}
 
 
 ROOT_URLCONF = 'music_service.urls'
@@ -66,11 +73,14 @@ WSGI_APPLICATION = 'music_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'music_service',
+        'USER': 'postgres',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -87,7 +97,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -104,22 +115,45 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'mainapp/static'),
-    # os.path.join(BASE_DIR, 'playlist_react/build/static'),
-    
     ]
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = 'media/'
 
 INTERNAL_IPS = ['127.0.0.1']
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ]
-# }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+     'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+    )
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'pavelpetrov08884@gmail.com'
+EMAIL_HOST_PASSWORD = 'yi1dnx3x'
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = True
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'email/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'SERIALIZERS': {}
+}
+
+
 
 AUTH_USER_MODEL = 'mainapp.Profile'
 
