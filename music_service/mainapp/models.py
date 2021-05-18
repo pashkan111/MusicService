@@ -1,8 +1,6 @@
 from django.db import models
-from django.urls import reverse
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.db.models.signals import post_save
 
 
 class UserAccountManager(BaseUserManager):
@@ -59,6 +57,7 @@ class Profile(AbstractBaseUser):
     
     def __str__(self):
         return self.email  
+
         
 
 class Playlist(models.Model):
@@ -66,13 +65,16 @@ class Playlist(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='playuser')
     song = models.ManyToManyField('Song', related_name='songs', blank=True)
 
-    def save(self, *args, **kwargs):
-        if not self.name:
-            self.name = 'Мой плейлист'
-        return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
+
+    def create_playlist(sender, instance, created, *args, **kwargs):
+        Profile.objects.get_or_create(user=instance, name='Плейлист 1')
+
+    post_save.connect(create_playlist, sender=Profile)
+
+
 
 
 class Song(models.Model):

@@ -72,7 +72,7 @@ class Logout(APIView):
 @api_view(['GET', 'POST'])
 # @permission_classes([IsAuthenticated])
 def get_playlists(request):
-    queryset = Playlist.objects.all()
+    queryset = Playlist.objects.filter()
     serializer = PlaylistSerialiser(queryset, many=True)
     return Response(serializer.data)
 
@@ -87,26 +87,61 @@ class PlaylistSongsViews(generics.ListAPIView):
         songs = queryset.song.all()
         return songs
 
-PlaylistSerialiser
+
 class DeleteSongFromPlaylist(APIView):
     serializer_class = SongSerialiser
     permission_classes = (permissions.AllowAny, )
 
-    def get_queryset(self):
-        playlist_id = self.kwargs.get('playlist_id')
-        song_id = self.kwargs.get('song_id')
+    def post(self, request):
+        playlist_id = request.data.get('playlist_id')
+        song_id = request.data.get('song_id')
         playlist = Playlist.objects.filter(id=playlist_id)
         if playlist:
-            song = Song.objects.filter(id=song_id)
+            playlist = playlist[0]
+            song = playlist.song.filter(id=song_id)
             if song:
-                playlist = playlist[0]
+                song = song[0] 
                 playlist.song.remove(song)
                 playlist.save()
-                queryset = playlist.song.all()
             else:
                 return Response({'Song is not found'})
         else:
             return Response({'Playlist is not found'})
-        return queryset
+        return Response({'ok'})
 
-    # def get(self):
+
+class CreatePlaylist(APIView):
+    
+    def post(self, request):
+        user = request.user
+        playlist_name = request.data.get('name')
+        if Playlist.objects.filter(user=user, name=playlist_name).exists():
+            return Response({'Плейлист с таким названием уже существует'})
+        else:
+            Playlist.objects.create(
+                user=user,
+                name=playlist_name
+            )
+        return Response({f'Плейлист {playlist_name} создан'})
+
+
+class AddSongToPlaylist(APIView):
+
+    def post(self, request):
+        user = request.user
+        playlist_id = request.data.get('playlist_id')
+        song_id = request.data.get('song_id')
+        playlist = Playlist.objects.filter(user=user, id=playlist_id)
+        song = Song.objects.filter(id=song_id)
+        if playlist and song:
+            playlist = playlist[0]
+            song = song[0]
+            if song not in playlist.song.all():
+                playlist.song.add(song)
+                return Response({'Песня успешно добавлена'})
+            else: 
+                return Response({'Песня уже находится в плейлисте'})
+        return Response({'Данные не получены'})
+
+
+
