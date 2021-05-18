@@ -41,9 +41,9 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': [ 
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [ 
+        'rest_framework.permissions.IsAuthenticated',
+    ],
     #    "DEFAULT_PARSER_CLASSES": [
     #     "rest_framework.parsers.JSONParser", 
     # ],
@@ -139,23 +139,23 @@ SIMPLE_JWT = {
 #     ),
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'pavelpetrov08884@gmail.com'
-EMAIL_HOST_PASSWORD = 'yi1dnx3x'
-EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'pavelpetrov08884@gmail.com'
+# EMAIL_HOST_PASSWORD = 'yi1dnx3x'
+# EMAIL_USE_TLS = True
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
     # 'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
     # 'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
-    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': 'email/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    # 'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    # 'USERNAME_RESET_CONFIRM_URL': 'email/reset/confirm/{uid}/{token}',
+    # 'ACTIVATION_URL': 'activate/{uid}/{token}',
     # 'SEND_ACTIVATION_EMAIL': True,
     # 'SEND_CONFIRMATION_EMAIL': True,
-    'SERIALIZERS': {}
+    # 'SERIALIZERS': {}
 }
 
 

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class UserAccountManager(BaseUserManager):
@@ -69,10 +70,16 @@ class Playlist(models.Model):
     def __str__(self):
         return self.name
 
-    def create_playlist(sender, instance, created, *args, **kwargs):
-        Profile.objects.get_or_create(user=instance, name='Плейлист 1')
+@receiver(post_save, sender=Profile)
+def create_playlist(sender, instance, created, **kwargs):
+    user = instance
+    if created:
+        playlist = Playlist(user=user, name='Новый плейлист')
+        playlist.save() 
 
-    post_save.connect(create_playlist, sender=Profile)
+# @receiver(post_save, sender=Profile)
+# def save_playlist(sender, instance, **kwargs):
+#     instance.playlist.save()
 
 
 
