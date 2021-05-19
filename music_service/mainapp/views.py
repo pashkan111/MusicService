@@ -11,6 +11,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 Profile = get_user_model()
+from .utils import MyPaginator
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -78,11 +79,12 @@ class Logout(APIView):
 
    
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def get_playlists(request):
     queryset = Playlist.objects.filter()
     serializer = PlaylistSerialiser(queryset, many=True)
     return Response(serializer.data)
+
 
 
 class PlaylistSongsViews(generics.ListAPIView):
@@ -94,6 +96,15 @@ class PlaylistSongsViews(generics.ListAPIView):
         queryset = Playlist.objects.get(id=id)
         songs = queryset.song.all()
         return songs
+
+
+class SongsViews(generics.ListAPIView):
+    serializer_class = SongSerialiser
+    permission_classes = (permissions.AllowAny, )
+
+    def get_queryset(self):
+        queryset = Song.objects.all()
+        return queryset
 
 
 class DeleteSongFromPlaylist(APIView):
@@ -136,10 +147,11 @@ class CreatePlaylist(APIView):
 class AddSongToPlaylist(APIView):
 
     def post(self, request):
-        user = request.user
+        # user = request.user
+        print(request.data)
         playlist_id = request.data.get('playlist_id')
         song_id = request.data.get('song_id')
-        playlist = Playlist.objects.filter(user=user, id=playlist_id)
+        playlist = Playlist.objects.filter( id=playlist_id)
         song = Song.objects.filter(id=song_id)
         if playlist and song:
             playlist = playlist[0]

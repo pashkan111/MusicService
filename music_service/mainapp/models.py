@@ -62,7 +62,7 @@ class Profile(AbstractBaseUser):
         
 
 class Playlist(models.Model):
-    name = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(max_length=100, default="Мой плейлист")
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='playuser')
     song = models.ManyToManyField('Song', related_name='songs', blank=True)
 
@@ -76,11 +76,6 @@ def create_playlist(sender, instance, created, **kwargs):
     if created:
         playlist = Playlist(user=user, name='Новый плейлист')
         playlist.save() 
-
-# @receiver(post_save, sender=Profile)
-# def save_playlist(sender, instance, **kwargs):
-#     instance.playlist.save()
-
 
 
 
