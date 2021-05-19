@@ -27,11 +27,12 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 @api_view(['PUT'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def update_user_profile(request):
     user = request.user
     serializer = UserSerialiserWithToken(user, many=False)
     data = request.data
+    print(data)
     user.name = data['name']
     user.email = data['email']
     user.save()
