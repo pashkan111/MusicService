@@ -42,17 +42,10 @@ class UserSerialiser(serializers.ModelSerializer):
 
 class UserSerialiserWithToken(UserSerialiser):
     token = serializers.SerializerMethodField(read_only = True)
-    # playlists = serializers.SerializerMethodField(read_only = True)
     class Meta:
         model = User
         fields = ('id', 'name', 'email', 'is_admin', 'token')
-        # fields = ('id', 'name', 'email', 'is_admin', 'token', 'playlists')
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
-
-    # def get_playlists(self, obj):
-    #     playlist = Playlist.objects.filter(user=obj)
-    #     playlists = PlaylistSerialiser(playlist).data
-    #     return playlists

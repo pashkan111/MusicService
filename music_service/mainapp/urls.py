@@ -1,6 +1,7 @@
 from .views import (
     get_playlists, PlaylistSongsViews, SignUp, MyTokenObtainPairView, update_user_profile,
      DeleteSongFromPlaylist, CreatePlaylist, AddSongToPlaylist, get_user_profile, SongsViews,
+     SearchMisic, DeletePlaylist
     )
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -9,6 +10,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 urlpatterns = [
     path('songs/', SongsViews.as_view()),
     path('playlists/', get_playlists),
+    path('delete-playlist/', DeletePlaylist.as_view()),
+    path('search-music/', SearchMisic.as_view()),
     path('add-song-to-playlist/', AddSongToPlaylist.as_view()),
     path('create-playlist/', CreatePlaylist.as_view()),
     path('playlist/<int:id>', PlaylistSongsViews.as_view()),

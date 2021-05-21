@@ -50,7 +50,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20,
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        # "rest_framework.authentication.SessionAuthentication",
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
@@ -133,18 +132,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 import datetime
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=20),
-#      'AUTH_TOKEN_CLASSES': (
-#         'rest_framework_simplejwt.tokens.AccessToken',
-#     ),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=200),
+
 }
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'pavelpetrov08884@gmail.com'
-# EMAIL_HOST_PASSWORD = 'yi1dnx3x'
-# EMAIL_USE_TLS = True
 
 DJOSER = {
     'LOGIN_FIELD': 'email',

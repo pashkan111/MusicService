@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import *
@@ -6,12 +5,11 @@ from rest_framework import viewsets, generics, permissions
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import status
+
 Profile = get_user_model()
-from .utils import MyPaginator
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -72,19 +70,21 @@ class SignUp(APIView):
 
 
 class Logout(APIView):
-
     def get(self, request, format=None):
         request.user.auth_token.delete()
         return True
 
    
-@api_view(['GET', 'POST'])
-# @permission_classes([IsAuthenticated])
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_playlists(request):
-    queryset = Playlist.objects.filter()
-    serializer = PlaylistSerialiser(queryset, many=True)
-    return Response(serializer.data)
-
+    user = request.user  
+    try:
+        queryset = Playlist.objects.filter(user=user)
+        serializer = PlaylistSerialiser(queryset, many=True)
+        return Response(serializer.data)
+    except:
+        return Response("error")
 
 
 class PlaylistSongsViews(generics.ListAPIView):
@@ -103,7 +103,12 @@ class SongsViews(generics.ListAPIView):
     permission_classes = (permissions.AllowAny, )
 
     def get_queryset(self):
-        queryset = Song.objects.all()
+        term = self.request.data.get('term')
+        if term:
+            queryset = Song.objects.filter(title__icontains=term)
+        else:
+            queryset = Song.objects.all()
+
         return queryset
 
 
@@ -164,4 +169,25 @@ class AddSongToPlaylist(APIView):
         return Response({'Данные не получены'})
 
 
+class SearchMisic(APIView):
+    def post(self, request):
+        term = request.data.get('term')
+        print(request.data)
+        queryset = Song.objects.filter(title__icontains=term)
+        serialiser = SongSerialiser(queryset, many=True)
+        print(serialiser.data)
+        return Response(serialiser.data)
 
+
+class DeletePlaylist(APIView):
+    permission_classes = (permissions.AllowAny, )
+    def post(self, request):
+        user = self.request.user
+        id = self.request.data.get('id')
+
+        if user and id:
+            Playlist.objects.filter(id=id).delete()
+            print('deleted')
+            return Response({'playlist has been deleted'})
+        return Response({'smth went wrong'})
+        

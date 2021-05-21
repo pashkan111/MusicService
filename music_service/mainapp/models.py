@@ -7,24 +7,20 @@ from django.dispatch import receiver
 class UserAccountManager(BaseUserManager):
     def create_user(self, email, name, password=None):
         if not email:
-            raise ValueError('Users must have an email address')
-        
+            raise ValueError('Users must have an email address')       
         email = self.normalize_email(email)
         user = self.model(email=email, name=name)
-
         user.set_password(password)
         user.save()
-
         return user
     
     def create_superuser(self, email, name, password):
         user = self.create_user(email, name, password)
-
         user.is_superuser = True
         user.is_staff = True
         user.save()
-
         return user
+
 
 class Profile(AbstractBaseUser):
     name = models.CharField(verbose_name='Логин', max_length=50, null=True, blank=True)
@@ -60,7 +56,6 @@ class Profile(AbstractBaseUser):
         return self.email  
 
         
-
 class Playlist(models.Model):
     name = models.CharField(max_length=100, default="Мой плейлист")
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='playuser')
@@ -76,7 +71,6 @@ def create_playlist(sender, instance, created, **kwargs):
     if created:
         playlist = Playlist(user=user, name='Новый плейлист')
         playlist.save() 
-
 
 
 class Song(models.Model):
