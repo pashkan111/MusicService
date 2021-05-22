@@ -1,14 +1,28 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux'
 import thunk from 'redux-thunk'
 import {composeWithDevTools} from 'redux-devtools-extension'
-import {playlistDetailReducer, playListReducer} from './reducers/listsReducer'
+import {playlistDetailReducer, playListReducer, createPlaylistReducer, deletePlaylistReducer} from './reducers/listsReducer'
+import {
+    loginReducer, registerReducer, userDetailReducer, userResetReducer
+} from './reducers/userReducer'
 
 const reducer = combineReducers({
     playList: playListReducer,
-    playlistDetail: playlistDetailReducer,
+    // playlistDetail: playlistDetailReducer,
+    userLogin: loginReducer,
+    userRegister: registerReducer,
+    userDetails: userDetailReducer,
+    userReset: userResetReducer,
+    createPlaylist: createPlaylistReducer,
+    // deletedPlaylist: deletePlaylistReducer
 })
 
-const initialState = {}
+const userInfoFromStorage = localStorage.getItem('userInfo') ?
+JSON.parse(localStorage.getItem('userInfo')) : null
+
+const initialState = {
+    userLogin: {userInfo: userInfoFromStorage}
+}
 
 const middleware = [thunk]
 

@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import *
-from rest_framework import viewsets, generics, permissions
+from rest_framework import viewsets, generics, permissions, status
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
@@ -31,7 +31,6 @@ def update_user_profile(request):
     user = request.user
     serializer = UserSerialiserWithToken(user, many=False)
     data = request.data
-    print(data)
     user.name = data['name']
     user.email = data['email']
     user.save()
@@ -51,7 +50,6 @@ class SignUp(APIView):
 
     def post(self, request, format=None):
         data = request.data
-        print(data)
         name = data['name']
         email = data['email']
         password = data['password']
@@ -98,18 +96,50 @@ class PlaylistSongsViews(generics.ListAPIView):
         return songs
 
 
-class SongsViews(generics.ListAPIView):
+class SongsViews(APIView):
     serializer_class = SongSerialiser
     permission_classes = (permissions.AllowAny, )
-
     def get_queryset(self):
-        term = self.request.data.get('term')
-        if term:
-            queryset = Song.objects.filter(title__icontains=term)
+        if self.post.term:
+            queryset = Song.objects.filter(title__icontains = self.post())
+            serialiser = SongSerialiser(queryset, many=True)
+            return Response(serialiser.data, status=status.HTTP_200_OK)
         else:
             queryset = Song.objects.all()
+            serialiser = SongSerialiser(queryset, many=True)
+            return Response(serialiser.data, status=status.HTTP_200_OK)
 
-        return queryset
+    def post(self, request):
+        print(self.request.data)
+        global term
+        term = self.request.data.get('term')
+        try:
+            if term:
+                queryset = Song.objects.filter(title__icontains = term)
+                serialiser = SongSerialiser(queryset, many=True)
+                return Response(serialiser.data, status=status.HTTP_200_OK)
+            else:
+                queryset = Song.objects.all()
+                serialiser = SongSerialiser(queryset, many=True)
+                return Response(serialiser.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+# @api_view(['GET', 'POST'])
+# def SongsViews(request):
+#     term = request.data.get('term')
+#     if term:
+#         queryset = Song.objects.filter(title__icontains = term)
+#         serialiser = SongSerialiser(queryset, many=True)
+#         return Response(serialiser.data, status=status.HTTP_200_OK)
+#     else:
+#         queryset = Song.objects.all()
+#         serialiser = SongSerialiser(queryset, many=True)
+#         return Response(serialiser.data, status=status.HTTP_200_OK)
+
 
 
 class DeleteSongFromPlaylist(APIView):

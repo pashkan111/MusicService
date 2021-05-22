@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 
 urlpatterns = [
+    # path('songs/', SongsViews),
     path('songs/', SongsViews.as_view()),
     path('playlists/', get_playlists),
     path('delete-playlist/', DeletePlaylist.as_view()),
