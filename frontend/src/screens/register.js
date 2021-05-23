@@ -70,7 +70,7 @@ function Register({location, history}) {
                         </FormControl>
                     </FormGroup>
                     
-                    <FormGroup controlId='password'>
+                    <FormGroup controlId='password2'>
                         <FormLabel>Подтвердите пароль</FormLabel>
                         <FormControl
                         type='password'

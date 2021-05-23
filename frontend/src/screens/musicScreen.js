@@ -5,35 +5,59 @@ import {useDispatch, useSelector} from 'react-redux'
 import Loader from '../components/loader'
 import Message from '../components/message'
 import Search from '../components/search'
+import searchSong from '../store'
 
 function MusicScreen() {
-    // const dispatch = useDispatch()
-    // const playlistDetail = useSelector(state => state.playlistDetail)
-    // const {loading, error, playlist} = playlistDetail
-    // const dispatch = useDispatch()
+
     const playList = useSelector(state => state.playList)
     const {playlists} = playList
+    const searchSong = useSelector(state => state.searchSong)
+    const {term} = searchSong
 
+    const ref = React.useRef()
     const [songs, setSongs] = useState([])
     const [currentPage, setCurrent] = useState(0)
     const [fetching, setFetching] = useState(true)
     const [count, setCount] = useState(0)
     
     useEffect(() => {
-
-        if (fetching) {
-            axios.get(`http://127.0.0.1:8000/api/songs/?_limit=10&_page=3&offset=${currentPage}`)
-            .then(resp => {
-                setSongs([...songs, ...resp.data.results])
-                setCurrent(prev => prev+20)
-                setCount(resp.data.count)
-            })
-            .finally(() => {
-                setFetching(false)
-
-            })
+        if (fetching) {  
+            queryData(term)
+            console.log('aaaaaa')
         }
-    }, [fetching])
+    }, [term])
+
+function queryData(term) {
+    axios({
+        method:"POST",
+        url: 'http://127.0.0.1:8000/api/songs/',
+        headers: {"Content-Type": "application/json"},
+        data:{
+            "term": term
+        }
+    })
+    .then(resp => {
+        ref.current = resp.data
+        sorting()
+    })
+}
+
+function sorting() {
+    const len = 20
+    if (ref.current.length < len) {
+        setSongs(ref.current)
+    } else {
+        const countIter = Math.ceil(ref.current.length/len)
+        if (fetching == true) {
+            for (let i=0; i<countIter; i++) {
+            let x = 0; let y = 20
+            setSongs(...songs, ref.current.slice(x, y))
+            x = x+20; y = y+20
+            setFetching(false)
+            }
+        }
+    }
+}
 
     useEffect(() => {
         document.addEventListener('scroll', scrollHandler)
@@ -62,20 +86,9 @@ function MusicScreen() {
         }).then (resp => console.log(resp))
     }
 
-    const searchMusic = (str) => {
-        axios({
-            method:"POST",
-            url: "http://127.0.0.1:8000/api/search-music/",
-            data: {
-                'term': str
-            },
-            headers: {"Content-Type": "application/json"},
-        }).then(resp => setSongs(resp.data))
-    }
-
     return (
         <div className='row justify-content-md-center'>
-            <Search searchMusic={searchMusic}/>
+            <Search/>
         {/* {
             loading? <Loader/>
         :error ? <Message variant='danger'>{error}</Message> */}
@@ -96,7 +109,6 @@ function MusicScreen() {
                             <Row>
                                 <NavDropdown title='Добавить'>
                                 {playlists.map(i => (
-                                    // <NavDropdown.Item key={i.id} onClick={() => console.log(i.id, item.id)}>{i.name}</NavDropdown.Item>
                                     <NavDropdown.Item key={i.id} onClick={() => addSongToPlaylist(i.id, item.id)}>{i.name}</NavDropdown.Item>
                                     ))}
                                 </NavDropdown>

@@ -1,5 +1,5 @@
 import React from 'react'
-import {Row, Col, Card} from 'react-bootstrap'
+import {Row, Col, Card, CardGroup} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,15 +10,17 @@ function Home() {
     const {userInfo} = userLogin
 
     return (       
-    <div className='row justify-content-md-center'>    
-        <h2 className='text-center'>Главная страница</h2>
-        <Row>
-            {userInfo ? 
-            (
+    <div className='row justify-content-md-center col-md-12 col-sm-12 col-xs-12'>
+        <CardGroup className='mt-2 mb-4'>
+            <Card>
+                <h2 className='text-center'>Добро пожаловать в Music servise</h2>
+            </Card>
+        </CardGroup>
+        <Row >
             <Row>
-            <Col className="col-md-9">
-                <Card style={{width: '14rem', border: 'double', marginTop: '5px'}}>
-                <Link to='/my_playlists/'>
+            <Col className="col-md-6 offset-2">
+                <Card style={{width: '14rem', border: 'double'}}>
+                <Link to={userInfo ? ('/my_playlists/') : ('/login/')}>
                     <Card.Img variant="top" src="https://vk.vkfaces.com/849136/v849136189/18d9d4/JjGcZP3Zby8.jpg" style={{width: '220px'}}/>
                     <Card.Body>
                     <Card.Title style={{height: '3rem'}}>
@@ -28,7 +30,7 @@ function Home() {
                     </Link>
                 </Card>
             </Col>
-            <Col className="col-md-3">
+            <Col className="col-md-4">
                 <Card style={{width: '14rem', border: 'double', marginTop: '5px'}}>
                 <Link to='/music/'>
                     <Card.Img variant="top" src="https://yt3.ggpht.com/ytc/AAUvwngBQ1xjRxSTX6eMq7DnJ1aUTqQBi5pDNhB5ePBP-g=s900-c-k-c0x00ffffff-no-rj" style={{width: '220px'}}/>
@@ -43,12 +45,7 @@ function Home() {
                 </Card>
             </Col>
             </Row>
-             ) : (
-                <Link to='/music/'>
-                        <h4>Войдите или зарегистрируйтесь чтобы слушать музыку</h4>
-                    </Link>
-            )     
-        }       
+                 
         </Row>
         </div>    
 

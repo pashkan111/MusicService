@@ -1,20 +1,19 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux'
 import thunk from 'redux-thunk'
 import {composeWithDevTools} from 'redux-devtools-extension'
-import {playlistDetailReducer, playListReducer, createPlaylistReducer, deletePlaylistReducer} from './reducers/listsReducer'
+import {playListReducer, SearchSongReducer} from './reducers/listsReducer'
 import {
     loginReducer, registerReducer, userDetailReducer, userResetReducer
 } from './reducers/userReducer'
 
 const reducer = combineReducers({
     playList: playListReducer,
-    // playlistDetail: playlistDetailReducer,
     userLogin: loginReducer,
     userRegister: registerReducer,
     userDetails: userDetailReducer,
     userReset: userResetReducer,
-    createPlaylist: createPlaylistReducer,
-    // deletedPlaylist: deletePlaylistReducer
+    searchSong: SearchSongReducer
+
 })
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?

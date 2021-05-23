@@ -2,14 +2,6 @@ import {
     PLAYLIST_REQUEST,
     PLAYLIST_SUCCESS,
     PLAYLIST_FAIL,
-
-    PLAYLIST_DETAIL_REQUEST,
-    PLAYLIST_DETAIL_SUCCESS,
-    PLAYLIST_DETAIL_FAIL,
-
-    PLAYLIST_FETCHING_REQUEST,
-    PLAYLIST_FETCHING_SUCCESS,
-    PLAYLIST_FETCHING_FAIL,
     
     PLAYLIST_CREATING_REQUEST,
     PLAYLIST_CREATING_SUCCESS,
@@ -17,7 +9,9 @@ import {
 
     PLAYLIST_DELETING_REQUEST,
     PLAYLIST_DELETING_SUCCESS,
-    PLAYLIST_DELETING_FAIL
+    PLAYLIST_DELETING_FAIL,
+
+    SEARCHING_SONG
 
 } from '../constants/playlistConstants'
 import axios from 'axios'
@@ -47,43 +41,8 @@ export const playlistActions = () => async (dispatch, getState) => {
     }
 }
 
-// export const playlistDetailActions = (id) => async (dispatch) => {
-//     try {
-//         dispatch({type: PLAYLIST_DETAIL_REQUEST})
-//         const {data} = await axios.get(`http://127.0.0.1:8000/api/playlist/${id}`)
-//         dispatch({
-//             type: PLAYLIST_DETAIL_SUCCESS,
-//             payload: data
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: PLAYLIST_DETAIL_FAIL,
-//             payload: error.responce && error.responce.data.message
-//             ? error.responce.data.message
-//             : error.message
-//         })
-//     }
-// }
 
 
-
-export const playlistDetailActions = (id) => async (dispatch) => {
-    try {
-        dispatch({type: PLAYLIST_DETAIL_REQUEST})
-        const {data} = await axios.get(`http://127.0.0.1:8000/api/playlist/${id}`)
-        dispatch({
-            type: PLAYLIST_DETAIL_SUCCESS,
-            payload: data
-        })
-    } catch (error) {
-        dispatch({
-            type: PLAYLIST_DETAIL_FAIL,
-            payload: error.responce && error.responce.data.message
-            ? error.responce.data.message
-            : error.message
-        })
-    }
-}
 
 export const createPlaylist = (name) => async(dispatch, getState) => {
     try{
@@ -92,7 +51,7 @@ export const createPlaylist = (name) => async(dispatch, getState) => {
     })
     const {userLogin: {userInfo}} = getState()
 
-    const {data} = axios({
+    const {data} = await axios({
         method:"POST",
         url: "http://127.0.0.1:8000/api/create-playlist/",
         data: {
@@ -103,18 +62,19 @@ export const createPlaylist = (name) => async(dispatch, getState) => {
             "Authorization": `Bearer ${userInfo.token}`
          }
         })
-
         dispatch({
             type: PLAYLIST_CREATING_SUCCESS,
             payload: data
         })
-    } catch {
+    } catch (error) {
         dispatch({
-            type: PLAYLIST_CREATING_FAIL,
+            type: PLAYLIST_FAIL,
+            payload: error.responce && error.responce.data.message
+            ? error.responce.data.message
+            : error.message
         })
     }
 }
-
 
 export const deletePlaylistAction = (id) => async(dispatch, getState) => {
     try{
@@ -146,4 +106,13 @@ export const deletePlaylistAction = (id) => async(dispatch, getState) => {
             payload: error.responce
         })
     }
+}
+
+
+export const searchItem = (term) => (dispatch) => {
+    dispatch({
+        type: SEARCHING_SONG,
+        payload: term
+    })
+    
 }

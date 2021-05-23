@@ -9,11 +9,18 @@ import {createPlaylist} from '../Actions/playlistActions'
 import axios from 'axios'
 
 function CreatePlayist({location, history}) {
-    const [playlistName, setPlaylistName] = useState('')
-    
+    const [playlistName, setPlaylistName] = useState('')  
     const dispatch = useDispatch()
-
     const redirect = location.search ? location.search.split('=')[1] : '/my_playlists/'
+
+    function assignName(e) {
+        const name = e.target.value
+        if (name.length < 15) {
+            setPlaylistName(name)
+        } else {
+            setPlaylistName(name.slice(0, 15))
+        }
+    }
 
     const handlerSubmit = (e) => {
         e.preventDefault()
@@ -21,7 +28,6 @@ function CreatePlayist({location, history}) {
         history.push(redirect)
     }
     return (
-        
             <FormContainer>  
                 <h2>Создать новый плейлист</h2>
 
@@ -31,8 +37,7 @@ function CreatePlayist({location, history}) {
                         <FormControl
                             type='text'
                             placeholder='Введите имя нового плейлиста'
-                            value={playlistName}
-                            onChange={(e) => setPlaylistName(e.target.value)}
+                            onChange={assignName}
                         >
                         </FormControl>
                     </FormGroup>

@@ -1,30 +1,34 @@
 import React from 'react'
-import {Form, Button} from 'react-bootstrap'
+import {Form, Button, FormControl} from 'react-bootstrap'
+import {useDispatch} from 'react-redux'
+import {searchItem} from '../Actions/playlistActions'
 
 function Search(props) {
     const [term, setTerm] = React.useState('')
-    console.log(term)
-
+    const dispatch = useDispatch()
 
     function startSearch(e) {
         e.preventDefault()
-        if (term !== '') {
-            props.searchMusic(term)  
-        }
+        dispatch(searchItem(term))
+
     }
 
     return (
-        <Form onSubmit={startSearch} inline
-            type='text'
+        <Form onSubmit={startSearch}
             className='mr-sm-2 ml-sm-5'
         >
-
+            <FormControl
+                type='text'
+                placeholder='Поиск'
+                onChange={(e) => setTerm(e.target.value)}
+            >
+            </FormControl>
         <Button
             type='submit'
             variant='outline-success'
             className='p-2'
         >
-            Submit
+            Найти
         </Button>
         </Form>
     )

@@ -13,7 +13,7 @@ function Playlists() {
 
     const dispatch = useDispatch()
     const playList = useSelector(state => state.playList)
-    const {loading, error, playlists, delLoading} = playList
+    const {loading, error, playlists} = playList
 
     useEffect(() => {
         dispatch(playlistActions())            
@@ -28,11 +28,11 @@ function Playlists() {
             <h3 className="text-center mb-4">Мои плейлисты</h3>
             {playlists.map(item => (
             <Col className="col-md-3">
-                <Card style={{width: '14rem', border: 'double', marginTop: '5px'}}>
+                <Card key={Date.now()} style={{width: '14rem', border: 'double', marginTop: '5px'}}>
                     <Card.Img variant="top" src="https://www.culture.ru/storage/images/7ca45d0d9d1e378f2338457334d35046/67daa40407747b7a5784abcfd11692cc.jpg" style={{width: '220px'}}/>
                     <Card.Body>
                     <Card.Title style={{height: '3rem'}}>
-                        <Link key={item.id} to={`/playlist-detail/${item.id}?name=${item.name}`}>
+                        <Link to={`/playlist-detail/${item.id}?name=${item.name}`}>
                             <h4 className="text-center" >{item.name}</h4>
                         </Link>            
                     </Card.Title>

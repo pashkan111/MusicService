@@ -80,9 +80,10 @@ export const register = (email, username, password, password2) => async (dispatc
             payload: data
         })
         localStorage.setItem('userInfo', JSON.stringify(data))
-    } catch {
+    } catch(error) {
         dispatch({
-            type: USER_REGISTER_FAIL
+            type: USER_REGISTER_FAIL,
+            payload: error.message
         })
     }
 }

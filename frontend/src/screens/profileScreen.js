@@ -46,7 +46,7 @@ function ProfileScreen({history}) {
 
     return (
         <Row>
-            <Col md={5}>
+            <Col className='col-md-12'>
                 <h3 className="text-center">Мой профиль</h3>
                 <FormContainer>  
                     {/* {error && <Message variant='danger'>{error}</Message>}
@@ -84,9 +84,7 @@ function ProfileScreen({history}) {
                     </Form>
                 </FormContainer> 
             </Col>
-            <Col md={7}>
-                <h3>Мои плейлисты</h3>
-            </Col>
+
         </Row>
     )
 }
