@@ -55,16 +55,19 @@ class SignUp(APIView):
         password = data['password']
         password2 = data['password2']
         if Profile.objects.filter(email=email).exists():
-            return Response({'Пользователь с таким email уже существует'})
+            message = {'Пользователь с таким email уже существует'}
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
         if not password==password2:
-            return Response({'Ошибка': 'Пароли не совпадают'})
+            message = {'Ошибка': 'Пароли не совпадают'}
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
         else:
-            Profile.objects.create_user(
+            new_user = Profile.objects.create_user(
                 name=name,
                 email=email,
                 password=password
                 )
-        return Response({f'Пользователь {name} был создан'})
+            serialiser = UserSerialiserWithToken(new_user, many=False)
+        return Response(serialiser.data)
 
 
 class Logout(APIView):
@@ -171,12 +174,12 @@ class CreatePlaylist(APIView):
         playlist_name = request.data.get('name')
         if Playlist.objects.filter(user=user, name=playlist_name).exists():
             return Response({'Плейлист с таким названием уже существует'})
-        else:
-            Playlist.objects.create(
-                user=user,
-                name=playlist_name
-            )
-        return Response({f'Плейлист {playlist_name} создан'})
+        new_playlist = Playlist.objects.create(
+            user=user,
+            name=playlist_name
+        )
+        serialiser = PlaylistSerialiser(new_playlist, many=False)
+        return Response(serialiser.data)
 
 
 class AddSongToPlaylist(APIView):
